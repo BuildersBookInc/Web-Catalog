@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Catalog</title>
+
+<style>
+body{
+  margin:0;
+  padding:20px;
+  background:#dcdcdc;
+  font-family:Arial,sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  box-sizing:border-box;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+#loadingScreen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#dcdcdc;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.loaderText{
+  font-size:22px;
+  font-weight:600;
+  color:#333;
+}
+
+#flipbook-wrap{
+  position:relative;
+  width:100%;
+  height:100%;
+  max-width:1600px;
+  max-height:1120px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#flipbook-wrap::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  width:46px;
+  height:100%;
+  transform:translateX(-50%);
+  background:radial-gradient(
+    ellipse at center,
+    rgba(0,0,0,.22) 0%,
+    rgba(0,0,0,.12) 35%,
+    rgba(0,0,0,.05) 55%,
+    rgba(0,0,0,0) 75%
+  );
+  pointer-events:none;
+  z-index:20;
+  opacity:1;
+  transition:opacity .25s ease;
+}
+
+#flipbook-wrap.book-closed::before{
+  opacity:0;
+}
+
+#flipbook{
+  visibility:hidden;
+  position:relative;
+  z-index:10;
+}
+
+#flipbook .page{
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:
+    inset 0 0 10px rgba(0,0,0,.10),
+    0 2px 10px rgba(0,0,0,.10);
+}
+
+#flipbook .page::after{
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:28px;
+  height:100%;
+  background:linear-gradient(
+    to left,
+    rgba(0,0,0,.12),
+    rgba(0,0,0,.05),
+    rgba(0,0,0,0)
+  );
+  pointer-events:none;
+  z-index:5;
+}
+
+#flipbook .page img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  background:#fff;
+  border:1px solid #e3e3e3;
+  box-sizing:border-box;
+}
+
+#flipbook .page::before{
+  content:"";
+  position:absolute;
+  width:80px;
+  height:80px;
+  bottom:0;
+  opacity:0;
+  transition:opacity .25s ease;
+  pointer-events:none;
+  z-index:6;
+}
+
+#flipbook .page:nth-child(even)::before{
+  right:0;
+  background:linear-gradient(
+    135deg,
+    rgba(0,0,0,0) 45%,
+    rgba(0,0,0,.12) 50%,
+    rgba(0,0,0,.25) 55%,
+    rgba(255,255,255,.85) 60%
+  );
+}
+
+#flipbook .page:nth-child(odd)::before{
+  left:0;
+  background:linear-gradient(
+    225deg,
+    rgba(0,0,0,0) 45%,
+    rgba(0,0,0,.12) 50%,
+    rgba(0,0,0,.25) 55%,
+    rgba(255,255,255,.85) 60%
+  );
+}
+
+#flipbook .page:hover::before{
+  opacity:1;
+}
+
+#flipbook .page:first-child::before,
+#flipbook .page:last-child::before{
+  display:none;
+}
+
+.controls{
+  margin-top:18px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+}
+
+button{
+  padding:10px 18px;
+  font-size:15px;
+  cursor:pointer;
+  border:1px solid #bdbdbd;
+  background:linear-gradient(to bottom,#fff,#efefef);
+  color:#222;
+  border-radius:6px;
+  box-shadow:0 1px 3px rgba(0,0,0,.10);
+}
+
+button:active{
+  transform:translateY(1px);
+}
+
+.slider-wrap{
+  width:min(1600px,94vw);
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+
+.slider-label{
+  font-size:14px;
+  color:#222;
+}
+
+#pageSlider{
+  width:100%;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loadingScreen">
+  <div class="loaderText">Loading Catalog...</div>
+</div>
+
+<div id="flipbook-wrap">
+  <div id="flipbook">
+    <div class="page"><img src="pages/frontcover1.jpg" alt="Front Cover 1"></div>
+    <div class="page"><img src="pages/frontcover2.jpg" alt="Front Cover 2"></div>
+
+    <div class="page"><img src="pages/01.jpg" alt="Page 01"></div>
+    <div class="page"><img src="pages/02.jpg" alt="Page 02"></div>
+
+    <div class="page"><img src="pages/03.jpg" alt="Page 03"></div>
+    <div class="page"><img src="pages/04.jpg" alt="Page 04"></div>
+    <div class="page"><img src="pages/05.jpg" alt="Page 05"></div>
+    <div class="page"><img src="pages/06.jpg" alt="Page 06"></div>
+    <div class="page"><img src="pages/07.jpg" alt="Page 07"></div>
+    <div class="page"><img src="pages/08.jpg" alt="Page 08"></div>
+    <div class="page"><img src="pages/09.jpg" alt="Page 09"></div>
+    <div class="page"><img src="pages/10.jpg" alt="Page 10"></div>
+    <div class="page"><img src="pages/11.jpg" alt="Page 11"></div>
+    <div class="page"><img src="pages/12.jpg" alt="Page 12"></div>
+    <div class="page"><img src="pages/13.jpg" alt="Page 13"></div>
+    <div class="page"><img src="pages/14.jpg" alt="Page 14"></div>
+    <div class="page"><img src="pages/15.jpg" alt="Page 15"></div>
+    <div class="page"><img src="pages/16.jpg" alt="Page 16"></div>
+    <div class="page"><img src="pages/17.jpg" alt="Page 17"></div>
+    <div class="page"><img src="pages/18.jpg" alt="Page 18"></div>
+    <div class="page"><img src="pages/19.jpg" alt="Page 19"></div>
+    <div class="page"><img src="pages/20.jpg" alt="Page 20"></div>
+    <div class="page"><img src="pages/21.jpg" alt="Page 21"></div>
+    <div class="page"><img src="pages/22.jpg" alt="Page 22"></div>
+    <div class="page"><img src="pages/23.jpg" alt="Page 23"></div>
+    <div class="page"><img src="pages/24.jpg" alt="Page 24"></div>
+    <div class="page"><img src="pages/25.jpg" alt="Page 25"></div>
+    <div class="page"><img src="pages/26.jpg" alt="Page 26"></div>
+    <div class="page"><img src="pages/27.jpg" alt="Page 27"></div>
+    <div class="page"><img src="pages/28.jpg" alt="Page 28"></div>
+    <div class="page"><img src="pages/29.jpg" alt="Page 29"></div>
+    <div class="page"><img src="pages/30.jpg" alt="Page 30"></div>
+    <div class="page"><img src="pages/31.jpg" alt="Page 31"></div>
+    <div class="page"><img src="pages/32.jpg" alt="Page 32"></div>
+    <div class="page"><img src="pages/33.jpg" alt="Page 33"></div>
+    <div class="page"><img src="pages/34.jpg" alt="Page 34"></div>
+    <div class="page"><img src="pages/35.jpg" alt="Page 35"></div>
+    <div class="page"><img src="pages/36.jpg" alt="Page 36"></div>
+    <div class="page"><img src="pages/37.jpg" alt="Page 37"></div>
+    <div class="page"><img src="pages/38.jpg" alt="Page 38"></div>
+    <div class="page"><img src="pages/39.jpg" alt="Page 39"></div>
+    <div class="page"><img src="pages/40.jpg" alt="Page 40"></div>
+    <div class="page"><img src="pages/41.jpg" alt="Page 41"></div>
+    <div class="page"><img src="pages/42.jpg" alt="Page 42"></div>
+    <div class="page"><img src="pages/43.jpg" alt="Page 43"></div>
+    <div class="page"><img src="pages/44.jpg" alt="Page 44"></div>
+    <div class="page"><img src="pages/45.jpg" alt="Page 45"></div>
+    <div class="page"><img src="pages/46.jpg" alt="Page 46"></div>
+    <div class="page"><img src="pages/47.jpg" alt="Page 47"></div>
+    <div class="page"><img src="pages/48.jpg" alt="Page 48"></div>
+    <div class="page"><img src="pages/49.jpg" alt="Page 49"></div>
+    <div class="page"><img src="pages/50.jpg" alt="Page 50"></div>
+    <div class="page"><img src="pages/51.jpg" alt="Page 51"></div>
+    <div class="page"><img src="pages/52.jpg" alt="Page 52"></div>
+    <div class="page"><img src="pages/53.jpg" alt="Page 53"></div>
+    <div class="page"><img src="pages/54.jpg" alt="Page 54"></div>
+    <div class="page"><img src="pages/55.jpg" alt="Page 55"></div>
+    <div class="page"><img src="pages/56.jpg" alt="Page 56"></div>
+    <div class="page"><img src="pages/57.jpg" alt="Page 57"></div>
+    <div class="page"><img src="pages/58.jpg" alt="Page 58"></div>
+    <div class="page"><img src="pages/59.jpg" alt="Page 59"></div>
+    <div class="page"><img src="pages/60.jpg" alt="Page 60"></div>
+    <div class="page"><img src="pages/61.jpg" alt="Page 61"></div>
+    <div class="page"><img src="pages/62.jpg" alt="Page 62"></div>
+    <div class="page"><img src="pages/63.jpg" alt="Page 63"></div>
+    <div class="page"><img src="pages/64.jpg" alt="Page 64"></div>
+
+    <div class="page"><img src="pages/backcover1.jpg" alt="Back Cover 1"></div>
+    <div class="page"><img src="pages/backcover2.jpg" alt="Back Cover 2"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="prevBtn">Back</button>
+  <button id="nextBtn">Next</button>
+</div>
+
+<div class="slider-wrap">
+  <div class="slider-label">
+    Pages <span id="pageDisplay">a–b</span>
+  </div>
+  <input type="range" id="pageSlider" min="0" max="33" step="1" value="0">
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/turn.min.js"></script>
+
+<script>
+$(function(){
+
+  const preloadFirstImages = [
+    "pages/frontcover1.jpg",
+    "pages/frontcover2.jpg",
+    "pages/01.jpg",
+    "pages/02.jpg",
+    "pages/03.jpg",
+    "pages/04.jpg",
+    "pages/05.jpg",
+    "pages/06.jpg"
+  ];
+
+  const remainingImages = [
+    "pages/07.jpg","pages/08.jpg","pages/09.jpg","pages/10.jpg","pages/11.jpg","pages/12.jpg",
+    "pages/13.jpg","pages/14.jpg","pages/15.jpg","pages/16.jpg","pages/17.jpg","pages/18.jpg",
+    "pages/19.jpg","pages/20.jpg","pages/21.jpg","pages/22.jpg","pages/23.jpg","pages/24.jpg",
+    "pages/25.jpg","pages/26.jpg","pages/27.jpg","pages/28.jpg","pages/29.jpg","pages/30.jpg",
+    "pages/31.jpg","pages/32.jpg","pages/33.jpg","pages/34.jpg","pages/35.jpg","pages/36.jpg",
+    "pages/37.jpg","pages/38.jpg","pages/39.jpg","pages/40.jpg","pages/41.jpg","pages/42.jpg",
+    "pages/43.jpg","pages/44.jpg","pages/45.jpg","pages/46.jpg","pages/47.jpg","pages/48.jpg",
+    "pages/49.jpg","pages/50.jpg","pages/51.jpg","pages/52.jpg","pages/53.jpg","pages/54.jpg",
+    "pages/55.jpg","pages/56.jpg","pages/57.jpg","pages/58.jpg","pages/59.jpg","pages/60.jpg",
+    "pages/61.jpg","pages/62.jpg","pages/63.jpg","pages/64.jpg","pages/backcover1.jpg","pages/backcover2.jpg"
+  ];
+
+  function preloadImages(imageList, callback){
+    let loaded = 0;
+    const total = imageList.length;
+
+    if(total === 0){
+      callback();
+      return;
+    }
+
+    imageList.forEach(function(src){
+      const img = new Image();
+      img.onload = img.onerror = function(){
+        loaded++;
+        if(loaded === total){
+          callback();
+        }
+      };
+      img.src = src;
+    });
+  }
+
+  function preloadRemainingImages(imageList){
+    setTimeout(function(){
+      imageList.forEach(function(src){
+        const img = new Image();
+        img.src = src;
+      });
+    }, 300);
+  }
+
+  preloadImages(preloadFirstImages, function(){
+
+    const flipbook = $("#flipbook");
+    const wrap = $("#flipbook-wrap");
+    const slider = $("#pageSlider");
+    const pageDisplay = $("#pageDisplay");
+
+    let wheelLock = false;
+
+    const spreadData = [
+      { page:1, label:"a–b" },
+      { page:3, label:"i–ii" },
+      { page:6, label:"2–3" },
+      { page:8, label:"4–5" },
+      { page:10, label:"6–7" },
+      { page:12, label:"8–9" },
+      { page:14, label:"10–11" },
+      { page:16, label:"12–13" },
+      { page:18, label:"14–15" },
+      { page:20, label:"16–17" },
+      { page:22, label:"18–19" },
+      { page:24, label:"20–21" },
+      { page:26, label:"22–23" },
+      { page:28, label:"24–25" },
+      { page:30, label:"26–27" },
+      { page:32, label:"28–29" },
+      { page:34, label:"30–31" },
+      { page:36, label:"32–33" },
+      { page:38, label:"34–35" },
+      { page:40, label:"36–37" },
+      { page:42, label:"38–39" },
+      { page:44, label:"40–41" },
+      { page:46, label:"42–43" },
+      { page:48, label:"44–45" },
+      { page:50, label:"46–47" },
+      { page:52, label:"48–49" },
+      { page:54, label:"50–51" },
+      { page:56, label:"52–53" },
+      { page:58, label:"54–55" },
+      { page:60, label:"56–57" },
+      { page:62, label:"58–59" },
+      { page:64, label:"60–61" },
+      { page:66, label:"62–63" },
+      { page:67, label:"63–c" }
+    ];
+
+    function calculateBookSize(){
+      const maxWidth = window.innerWidth * 0.94;
+      const maxHeight = window.innerHeight * 0.78;
+      const ratio = 1000 / 700;
+
+      let width = maxWidth;
+      let height = width / ratio;
+
+      if(height > maxHeight){
+        height = maxHeight;
+        width = height * ratio;
+      }
+
+      return {
+        width: Math.floor(width),
+        height: Math.floor(height)
+      };
+    }
+
+    function normalizeDisplayPage(page){
+      let normalized = spreadData[0].page;
+      for(let i = 0; i < spreadData.length; i++){
+        if(page >= spreadData[i].page){
+          normalized = spreadData[i].page;
+        } else {
+          break;
+        }
+      }
+      return normalized;
+    }
+
+    function getSliderIndexFromPage(page){
+      const normalized = normalizeDisplayPage(page);
+      const index = spreadData.findIndex(item => item.page === normalized);
+      return index >= 0 ? index : 0;
+    }
+
+    function getSpreadLabel(page){
+      const normalized = normalizeDisplayPage(page);
+      const match = spreadData.find(item => item.page === normalized);
+      return match ? match.label : "";
+    }
+
+    function updateClosed(page){
+      const total = flipbook.turn("pages");
+      if(page === 1 || page === 67 || page === total){
+        wrap.addClass("book-closed");
+      } else {
+        wrap.removeClass("book-closed");
+      }
+    }
+
+    function updateSlider(page){
+      const normalized = normalizeDisplayPage(page);
+      slider.val(getSliderIndexFromPage(normalized));
+      pageDisplay.text(getSpreadLabel(normalized));
+    }
+
+    const size = calculateBookSize();
+
+    flipbook.turn({
+      width: size.width,
+      height: size.height,
+      autoCenter: true,
+      display: "double",
+      page: 1,
+      duration: 900,
+      gradients: true,
+      acceleration: true,
+      elevation: 80,
+      when: {
+        turned: function(e, page){
+          updateClosed(page);
+          updateSlider(page);
+        }
+      }
+    });
+
+    updateClosed(1);
+    updateSlider(1);
+
+    flipbook.css("visibility","visible");
+    $("#loadingScreen").fadeOut(400);
+
+    preloadRemainingImages(remainingImages);
+
+    $("#prevBtn").on("click", function(){
+      flipbook.turn("previous");
+    });
+
+    $("#nextBtn").on("click", function(){
+      flipbook.turn("next");
+    });
+
+    slider.on("input change", function(){
+      const spreadIndex = parseInt($(this).val(), 10);
+      const targetPage = spreadData[spreadIndex].page;
+      flipbook.turn("page", targetPage);
+    });
+
+    $(document).on("keydown", function(e){
+      if(e.key === "ArrowLeft") flipbook.turn("previous");
+      if(e.key === "ArrowRight") flipbook.turn("next");
+    });
+
+    wrap.on("wheel", function(e){
+      e.preventDefault();
+
+      if(wheelLock) return;
+      wheelLock = true;
+
+      if(e.originalEvent.deltaY > 0){
+        flipbook.turn("next");
+      } else {
+        flipbook.turn("previous");
+      }
+
+      setTimeout(function(){
+        wheelLock = false;
+      }, 250);
+    });
+
+    flipbook.on("mousemove", function(e){
+      const offset = flipbook.offset();
+      const x = e.pageX - offset.left;
+      const y = e.pageY - offset.top;
+      const width = flipbook.width();
+      const height = flipbook.height();
+      const corner = 120;
+
+      let peel = false;
+
+      if(x < corner && y > height - corner) peel = "bl";
+      if(x > width - corner && y > height - corner) peel = "br";
+
+      if(peel){
+        flipbook.turn("peel", peel);
+      } else {
+        flipbook.turn("peel", false);
+      }
+    });
+
+    flipbook.on("mouseleave", function(){
+      flipbook.turn("peel", false);
+    });
+
+    $(window).on("resize", function(){
+      const size = calculateBookSize();
+      flipbook.turn("size", size.width, size.height);
+    });
+
+  });
+
+});
+</script>
+
+</body>
+</html>
