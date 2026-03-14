@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Catalog</title>
+<title>Builder's Book Inc. - Online Catalog</title>
 
 <style>
 body{
@@ -286,6 +286,20 @@ body{
   display:none;
 }
 
+#flipbook .page > a.page-link{
+  display:block;
+  width:100%;
+  height:100%;
+  text-decoration:none;
+  color:inherit;
+}
+
+#flipbook .page > a.page-link img{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
 .slider-wrap{
   width:min(1600px,94vw);
   margin-top:14px;
@@ -508,7 +522,7 @@ body{
 
 <div class="slider-wrap">
   <div class="slider-label">
-    Pages <span id="pageDisplay">Cover</span>
+    Pages <span id="pageDisplay">- Front Cover</span>
   </div>
   <input type="range" id="pageSlider" min="0" max="34" step="1" value="0">
 </div>
@@ -518,6 +532,77 @@ body{
 
 <script>
 $(function(){
+
+  const pageLinks = {
+    "frontcover1.jpg": "https://www.buildersbook.com/",
+    "frontcover2.jpg": "https://www.buildersbook.com/accessibility-ada.html",
+    "01.jpg": "https://www.buildersbook.com/list-of-categories",
+    "02.jpg": "https://www.buildersbook.com/list-of-categories",
+    "03.jpg": "https://www.buildersbook.com/codes-standards/code-checklists.html",
+    "04.jpg": "https://www.buildersbook.com/quick-card-catalog",
+    "05.jpg": "https://www.buildersbook.com/quick-card-catalog",
+    "06.jpg": "https://www.buildersbook.com/quick-card-catalog",
+    "07.jpg": "https://www.buildersbook.com/flash-cards.html",
+    "08.jpg": "https://www.buildersbook.com/flash-cards.html",
+    "09.jpg": "https://www.buildersbook.com/flash-cards.html",
+    "10.jpg": "https://www.buildersbook.com/flash-cards.html",
+    "11.jpg": "https://www.buildersbook.com/study-guides/contractors-license-exam.html",
+    "12.jpg": "https://www.buildersbook.com/study-guides/contractors-license-exam.html",
+    "13.jpg": "https://www.buildersbook.com/trades-topics/safetyosha.html",
+    "14.jpg": "https://www.buildersbook.com/estimating/craftsman-cost-guides.html",
+    "15.jpg": "https://www.buildersbook.com/estimating/rs-means-publications.html",
+    "16.jpg": "https://www.buildersbook.com/estimating/sierrawest-publications.html",
+    "17.jpg": "https://www.buildersbook.com/estimating.html",
+    "18.jpg": "https://www.buildersbook.com/builder-s-activity-daily-log.html",
+    "19.jpg": "https://www.buildersbook.com/forms-legal-business.html",
+    "20.jpg": "https://www.buildersbook.com/california-forms-contracts.html",
+    "21.jpg": "https://www.buildersbook.com/aia-contract-documents.html",
+    "22.jpg": "https://www.buildersbook.com/forms-legal-business/home-inspection-forms.html",
+    "23.jpg": "https://www.buildersbook.com/study-guides/inspectors-study-guides.html",
+    "24.jpg": "https://www.buildersbook.com/codes-standards/2024-international-codes.html",
+    "25.jpg": "https://www.buildersbook.com/codes-standards/2024-international-codes.html",
+    "26.jpg": "https://www.buildersbook.com/study-guides/inspectors-study-guides/icc-study-companions.html",
+    "27.jpg": "https://www.buildersbook.com/codes-standards/icc-standards.html",
+    "28.jpg": "https://www.buildersbook.com/codes-standards/icc-standards.html",
+    "29.jpg": "https://www.buildersbook.com/fast-tabs.html",
+    "30.jpg": "https://www.buildersbook.com/codes-standards/2022-edition-california-title-24.html",
+    "31.jpg": "https://www.buildersbook.com/codes-standards/2022-edition-california-title-24.html",
+    "32.jpg": "https://www.buildersbook.com/accessibility-ada.html",
+    "33.jpg": "https://www.buildersbook.com/oregon-codes.html",
+    "34.jpg": "https://www.buildersbook.com/washington-codes.html",
+    "35.jpg": "https://www.buildersbook.com/codes-standards/florida-building-codes.html",
+    "36.jpg": "https://www.buildersbook.com/codes-standards/ohio-codes.html",
+    "37.jpg": "https://www.buildersbook.com/plumbing/2024-uniform-codes.html",
+    "38.jpg": "https://www.buildersbook.com/plumbing.html",
+    "39.jpg": "https://www.buildersbook.com/plumbing.html",
+    "40.jpg": "https://www.buildersbook.com/electrical/2026-nec.html",
+    "41.jpg": "https://www.buildersbook.com/electrical/electrical-study-guides.html",
+    "42.jpg": "https://www.buildersbook.com/electrical/tom-henry-books.html",
+    "43.jpg": "https://www.buildersbook.com/electrical/mike-holt.html",
+    "44.jpg": "https://www.buildersbook.com/electrical/stallcups-books.html",
+    "45.jpg": "https://www.buildersbook.com/electrical/iaei-international-association-of-electrical-inspectors.html",
+    "46.jpg": "https://www.buildersbook.com/electrical/uglys-books.html",
+    "47.jpg": "https://www.buildersbook.com/nfpa-manuals.html",
+    "48.jpg": "https://www.buildersbook.com/fire-protection.html",
+    "49.jpg": "https://www.buildersbook.com/plumbing/2024-uniform-codes.html",
+    "50.jpg": "https://www.buildersbook.com/hvac.html",
+    "51.jpg": "https://www.buildersbook.com/hvac/lama-books.html",
+    "52.jpg": "https://www.buildersbook.com/hvac/carrier-publication.html",
+    "53.jpg": "https://www.buildersbook.com/hvac/smacna-publications.html",
+    "54.jpg": "https://www.buildersbook.com/welding.html",
+    "55.jpg": "https://www.buildersbook.com/steel-construction.html",
+    "56.jpg": "https://www.buildersbook.com/audel-books.html",
+    "57.jpg": "https://www.buildersbook.com/masonry.html",
+    "58.jpg": "https://www.buildersbook.com/plaster-drywall.html",
+    "59.jpg": "https://www.buildersbook.com/swimming-pools.html",
+    "60.jpg": "https://www.buildersbook.com/landscaping.html",
+    "61.jpg": "https://www.buildersbook.com/landscaping.html",
+    "62.jpg": "https://www.buildersbook.com/seismic-earthquake.html",
+    "63.jpg": "https://www.buildersbook.com/land-surveying.html",
+    "64.jpg": "https://www.buildersbook.com/catalogsearch/result/?q=sustainable+building",
+    "backcover1.jpg": "https://www.buildersbook.com/about-us",
+    "backcover2.jpg": "https://www.buildersbook.com/shipping-and-returns"
+  };
 
   const preloadFirstImages = [
     "pages/frontcover1.jpg",
@@ -595,6 +680,9 @@ $(function(){
     let dragStartY = 0;
     let startPanX = 0;
     let startPanY = 0;
+    let didDrag = false;
+    let suppressNextClick = false;
+    const dragThreshold = 6;
 
     const spreadData = [
       { page:1, label:"- Front Cover" },
@@ -602,37 +690,62 @@ $(function(){
       { page:4, label:"ii-1" },
       { page:6, label:"2-3" },
       { page:8, label:"4-5" },
-       { page:10, label:"6-7" },
+      { page:10, label:"6-7" },
       { page:12, label:"8-9" },
-       { page:14, label:"10-11" },
-       { page:16, label:"12-13" },
-       { page:18, label:"14-15" },
-       { page:20, label:"16-17" },
-       { page:22, label:"18-19" },
-       { page:24, label:"20-21" },
-       { page:26, label:"22-23" },
-       { page:28, label:"24-25" },
-       { page:30, label:"26-27" },
-       { page:32, label:"28-29" },
-       { page:34, label:"30-31" },
-       { page:36, label:"32-33" },
-       { page:38, label:"34-35" },
-       { page:40, label:"36-37" },
-       { page:42, label:"38-39" },
-       { page:44, label:"40-41" },
-       { page:46, label:"42-43" },
-       { page:48, label:"44-45" },
-       { page:50, label:"46-47" },
-       { page:52, label:"48-49" },
-       { page:54, label:"50-51" },
-       { page:56, label:"52-53" },
-       { page:58, label:"54-55" },
-       { page:60, label:"56-57" },
-       { page:62, label:"58-59" },
-       { page:64, label:"60-61" },
-       { page:66, label:"62 - B" },
-       { page:67, label:"- Back Cover" }
+      { page:14, label:"10-11" },
+      { page:16, label:"12-13" },
+      { page:18, label:"14-15" },
+      { page:20, label:"16-17" },
+      { page:22, label:"18-19" },
+      { page:24, label:"20-21" },
+      { page:26, label:"22-23" },
+      { page:28, label:"24-25" },
+      { page:30, label:"26-27" },
+      { page:32, label:"28-29" },
+      { page:34, label:"30-31" },
+      { page:36, label:"32-33" },
+      { page:38, label:"34-35" },
+      { page:40, label:"36-37" },
+      { page:42, label:"38-39" },
+      { page:44, label:"40-41" },
+      { page:46, label:"42-43" },
+      { page:48, label:"44-45" },
+      { page:50, label:"46-47" },
+      { page:52, label:"48-49" },
+      { page:54, label:"50-51" },
+      { page:56, label:"52-53" },
+      { page:58, label:"54-55" },
+      { page:60, label:"56-57" },
+      { page:62, label:"58-59" },
+      { page:64, label:"60-61" },
+      { page:66, label:"62 - B" },
+      { page:67, label:"- Back Cover" }
     ];
+
+    function applyPageLinks(){
+      flipbook.find(".page").each(function(){
+        const page = $(this);
+        const img = page.find("img").first();
+
+        if(!img.length) return;
+        if(page.children("a.page-link").length) return;
+
+        const src = img.attr("src") || "";
+        const fileName = src.split("/").pop();
+        const url = pageLinks[fileName];
+
+        if(!url) return;
+
+        img.wrap(
+          $('<a>', {
+            class: 'page-link',
+            href: url,
+            target: '_blank',
+            rel: 'noopener noreferrer'
+          })
+        );
+      });
+    }
 
     function calculateBookSize(){
       const maxWidth = window.innerWidth * 0.94;
@@ -890,6 +1003,8 @@ $(function(){
 
     const size = calculateBookSize();
 
+    applyPageLinks();
+
     flipbook.turn({
       width: size.width,
       height: size.height,
@@ -1012,6 +1127,7 @@ $(function(){
       if(zoomLevel <= 1) return;
 
       isDragging = true;
+      didDrag = false;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       startPanX = panX;
@@ -1024,14 +1140,34 @@ $(function(){
     $(document).on("mousemove", function(e){
       if(!isDragging) return;
 
-      panX = startPanX + (e.clientX - dragStartX);
-      panY = startPanY + (e.clientY - dragStartY);
+      const moveX = e.clientX - dragStartX;
+      const moveY = e.clientY - dragStartY;
+
+      if(Math.abs(moveX) > dragThreshold || Math.abs(moveY) > dragThreshold){
+        didDrag = true;
+        suppressNextClick = true;
+      }
+
+      panX = startPanX + moveX;
+      panY = startPanY + moveY;
       applyZoom();
     });
 
     $(document).on("mouseup", function(){
       isDragging = false;
       wrap.removeClass("is-dragging");
+
+      setTimeout(function(){
+        didDrag = false;
+      }, 0);
+    });
+
+    flipbook.on("click", "a.page-link", function(e){
+      if(suppressNextClick){
+        e.preventDefault();
+        e.stopPropagation();
+        suppressNextClick = false;
+      }
     });
 
     flipbook.on("mousemove", function(e){
